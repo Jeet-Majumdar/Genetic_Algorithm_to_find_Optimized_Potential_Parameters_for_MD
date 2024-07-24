@@ -18,3 +18,5 @@ The entire activity is partlially automatic and has to be done through the helpe
 6. `GA_5_reassign_rank.sh` can be used to rename run folders in a given population folder. It is of no use if you just rename the population folder to some other name.
 
 Making it automatic was not feasible as it would require me to add another monitoring app which can track the completion of all the MD runs in a population.
+
+> A lammps data file is given for start, along with example job submission scripts: `run_lammps_pkm2` and `run_lammps_tue`.
