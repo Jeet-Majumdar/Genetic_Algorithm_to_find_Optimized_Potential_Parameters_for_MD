@@ -1,0 +1,37 @@
+pair_style      lj/charmm/coul/long  9.0 10.5
+bond_style      harmonic
+angle_style     harmonic
+dihedral_style  charmm
+improper_style  none
+kspace_style    pppm 0.0001
+
+mass 1 12.01 # c3
+mass 2 1.008 # h1
+mass 3 1.008 # hc
+mass 4 1.008 # hs
+mass 5 32.06 # sh
+
+bond_coeff 1 291.9     1.3473  # 1  hs-sh
+bond_coeff 2 213.7     1.8435  # 2  c3-sh
+bond_coeff 3 330.6     1.0969  # 3  c3-h1
+bond_coeff 4 300.9     1.5375  # 4  c3-c3
+bond_coeff 5 330.6     1.0969  # 5  c3-hc
+
+angle_coeff 1 46.4      109.56  # 1  c3-c3-h1
+angle_coeff 2 46.3      109.80  # 2  c3-c3-hc
+angle_coeff 3 60.4      113.13  # 3  c3-c3-sh
+angle_coeff 4 44.5       96.40  # 4  c3-sh-hs
+angle_coeff 5 39.2      108.46  # 5  h1-c3-h1
+angle_coeff 6 42.0      108.42  # 6  h1-c3-sh
+angle_coeff 7 39.4      107.58  # 7  hc-c3-hc
+
+dihedral_coeff 1 0.750     3  0     0.000 # 1  c3-c3-sh-hs
+dihedral_coeff 2 1.400     3  0     0.000 # 2  h1-c3-c3-hc
+dihedral_coeff 3 0.750     3  0     0.000 # 3  h1-c3-sh-hs
+dihedral_coeff 4 1.400     3  0     0.000 # 4  hc-c3-c3-sh
+
+pair_coeff 1 1 0.10720575123408946 3.6921692569202063 #c3
+pair_coeff 2 2 0.016733023151930464 2.2417841984441513 #h1
+pair_coeff 3 3 0.015344329793412995 2.7796134557651873 #hc
+pair_coeff 4 4 0.01514976992289681 1.0850911804766286 #hs
+pair_coeff 5 5 0.2607110628126775 3.3589439524597284 #sh

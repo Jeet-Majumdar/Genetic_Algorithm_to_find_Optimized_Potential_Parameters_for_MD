@@ -1,0 +1,33 @@
+#!/bin/bash
+#PBS -m abe
+#PBS -l nodes=1:ppn=24:cpu24a
+#PBS -l walltime=72:00:00
+#PBS -o stdout.$PBS_JOBID
+#PBS -e stderr.$PBS_JOBID
+#PBS -N  30012
+##PBS -M mail2majumdar@gmail.com
+cd $PBS_O_WORKDIR
+
+source /apps/Intel/bin/compilervars.sh intel64
+source /apps/Intel/impi/5.0.3.049/intel64/bin/mpivars.sh
+export INTEL_LICENSE_FILE=28518@tuemn1,28518@tuemn2,28518@tueln1
+
+module load compiler/intel/2018
+
+EXECUTABLE=/sscu_gpfs/home/phyjeet/Install/lammps-master/src/lmp_intel_cpu_intelmpi
+
+export OMP_NUM_THREADS=1
+
+export I_MPI_PIN_PROCESSOR_LIST=0-23
+export I_MPI_FABRICS=shm:tmi
+export I_MPI_FALLBACK=0
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APP_LIB_PATH
+
+#(MMKHAN LINE) time mpiexec.hydra -machinefile "$PBS_NODEFILE" -np $PBS_NP -genvall -ppn $PBS_NUM_PPN $EXECUTABLE -in in.graphene_ICE_WATER_SPCE_nvt >& log.graphene_ICE_WATER_SPCE_nvt
+
+mkdir temp
+cd temp
+cp ../* ./
+
+time mpiexec.hydra -f "$PBS_NODEFILE" -np $PBS_NP -ppn $PBS_NUM_PPN $EXECUTABLE -in in.npt_nve >& log.npt_nve 
+

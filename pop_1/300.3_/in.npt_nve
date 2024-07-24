@@ -1,0 +1,118 @@
+units           real
+atom_style      full
+boundary        p p p
+dielectric      1
+#special_bonds   lj/coul 0.0 0.0 1.0 
+
+read_data       data.250N_ethanethiol_liquid_AA 
+include         para.ethanethiol.3
+
+variable        Temp    equal   300
+variable        Press   equal   1.0
+
+#PAUSE# variable        run_length_nve_rescale  equal 10000000
+#PAUSE# variable        run_length_nve          equal 2000000
+variable        run_length_npt          equal 10000000
+variable        run_length_nve          equal  2000000
+#PAUSE# variable        run_length_nvt          equal 0
+variable        dump_freq               equal 1000
+variable        t_step                  equal 1 
+
+pair_modify     mix arithmetic
+neighbor        4.0 bin
+neigh_modify    every 1 delay 0 check yes
+thermo_style    multi
+
+variable        input index in.graphene_flow_pure2.lammps
+variable        sname index ethanethiol_250N_${Temp}_${Press}
+
+print                          .
+print ==========================================
+print "Minimization"
+print ==========================================
+print                          .
+thermo          10
+min_style       sd
+minimize        1.0e-4 1.0e-4 500 5000
+min_style       cg
+minimize        1.0e-4 1.0e-4 500 5000
+
+
+reset_timestep  0
+timestep        ${t_step}
+thermo          ${dump_freq}
+thermo_style    custom step pe ke etotal temp xlo xhi ylo yhi zlo zhi vol  density enthalpy
+
+
+#PAUSE# log             log.nve_rescale
+#PAUSE# print                          .
+#PAUSE# print ==================================================
+#PAUSE# print "NVE dynamics with Rescale"
+#PAUSE# print ==================================================
+#PAUSE# print                          .
+#PAUSE# fix             8 all nve
+#PAUSE# fix             7 all temp/rescale 1 ${Temp} ${Temp} 0.02 1.0
+#PAUSE# run             ${run_length_nve_rescale}
+#PAUSE# unfix           7
+#PAUSE# unfix           8
+#PAUSE# 
+#PAUSE# log             log.nve
+#PAUSE# print                          .
+#PAUSE# print ==================================================
+#PAUSE# print "NVE dynamics"
+#PAUSE# print ==================================================
+#PAUSE# print                          .
+#PAUSE# fix             8 all nve
+#PAUSE# run             ${run_length_nve}
+#PAUSE# unfix           8
+
+
+log             log.npt
+print                          .
+print ==================================================
+print "NPT dynamics with an isotropic pressure"
+print ==================================================
+print                          .
+fix             2 all npt temp ${Temp} ${Temp} 100.0 iso ${Press} ${Press} 1000.0
+neigh_modify    every 1 delay 0 check no
+restart         ${dump_freq} ${sname}_npt.restart1 ${sname}_npt.restart2
+dump            1 all dcd ${dump_freq} ${sname}_npt.dcd
+dump_modify     1 unwrap yes sort id
+run             ${run_length_npt} 
+undump          1
+unfix           2
+
+write_data      data.${sname}_npt_equil
+
+log             log.nve
+print                          .
+print ==================================================
+print "NVE dynamics"
+print ==================================================
+print                          .
+fix             8 all nve
+dump            1 all dcd ${dump_freq} ${sname}_nve.dcd
+dump_modify     1 unwrap yes sort id
+run             ${run_length_nve}
+undump          1
+unfix           8
+
+write_data      data._nve_equil
+
+#PAUSE# log             log.nvt
+#PAUSE# print                          .
+#PAUSE# print =================================================
+#PAUSE# print "NVT Equilibriation"
+#PAUSE# print =================================================
+#PAUSE# print                          .
+#PAUSE# fix             2 all nvt temp ${Temp} ${Temp} 100.0
+#PAUSE# neigh_modify    every 1 delay 0 check no
+#PAUSE# restart         ${dump_freq} ${sname}_nvt.restart1 ${sname}_nvt.restart2
+#PAUSE# dump            1 all dcd ${dump_freq} ${sname}_nvt.dcd
+#PAUSE# dump_modify     1 unwrap yes sort id
+#PAUSE# run             ${run_length_nvt}
+#PAUSE# undump          1
+#PAUSE# unfix           2
+#PAUSE# 
+#PAUSE# write_data      data.${sname}_nvt_equil
+
