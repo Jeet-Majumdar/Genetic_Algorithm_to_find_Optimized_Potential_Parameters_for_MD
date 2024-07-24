@@ -1,4 +1,4 @@
-# Optimized_Potential_Parameters_for_MD_using_Genetic_Algorithm
+# Genetic_Algorithm_to_find_Optimized_Potential_Parameters_for_MD
 
 An implementation of Genetic Algorithm to find optimized potential interaction parameters for and from MD simulations
 
